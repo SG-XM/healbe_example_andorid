@@ -39,6 +39,7 @@ public class ConnectActivity extends BaseActivity implements ConnectRouter {
         put(State.SETUP_PIN, SetupPinFragment::newInstance);
     }};
 
+    //TODO 6.检查Healbe-GoBe-get()-HealbeDevice，是否需要搜寻设备
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,7 @@ public class ConnectActivity extends BaseActivity implements ConnectRouter {
         findViewById(R.id.container).setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
     }
 
+    //TODO 7.根据state及stateMap，进入对应的Fragment，如搜索设备state：SEARCH——SearchFragment
     @SuppressWarnings("ConstantConditions")
     @Override
     public void goState(ConnectRouter.State state, boolean back) {

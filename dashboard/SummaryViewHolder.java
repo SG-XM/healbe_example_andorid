@@ -23,31 +23,40 @@ import androidx.core.content.ContextCompat;
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
 public class SummaryViewHolder {
+
     private View v;
     SummaryInfo todaySummaryInfo = null;
 
-    DashboardView energyBar;
+    DashboardView energyInBar;
+    DashboardView energyOutBar;
     DashboardView waterBar;
     DashboardView heartBar;
     DashboardView stressBar;
     DashboardView sleepBar;
+    DashboardView bloodBar;
 
     public SummaryViewHolder(View itemView) {
         v = itemView;
 
-        energyBar = v.findViewById(R.id.energy_bar);
+        energyInBar = v.findViewById(R.id.energy_in_bar);
+        energyOutBar = v.findViewById(R.id.energy_out_bar);
         waterBar = v.findViewById(R.id.water_bar);
         heartBar = v.findViewById(R.id.heart_bar);
         stressBar = v.findViewById(R.id.stress_bar);
         sleepBar = v.findViewById(R.id.sleep_bar);
-
+        bloodBar = v.findViewById(R.id.blood_bar);
     }
 
-    boolean isNight() {
-        return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 - TimeZone.getDefault().getRawOffset() / (1000 * 60) > 9 * 60
-                || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 - TimeZone.getDefault().getRawOffset() / (1000 * 60) < 6 * 60;
-    }
+    public void setSummary(SummaryInfo todaySummaryInfo) {
+        this.todaySummaryInfo = todaySummaryInfo;
 
+        setEnergySum(todaySummaryInfo);
+        setHydrationSum(todaySummaryInfo);
+        setHeartSum(todaySummaryInfo);
+        setStressSum(todaySummaryInfo);
+        setSleepSum(todaySummaryInfo);
+        setBloodPressureSum(todaySummaryInfo);
+    }
 
     @SuppressWarnings("ConstantConditions")
     private boolean setEnergySum(SummaryInfo o) {
@@ -73,22 +82,34 @@ public class SummaryViewHolder {
                 UnitsFormatter.stepsAndTime(v.getContext(),
                         o.getDaySummary().getEnergySummary().get().getSteps(), active).toString();
 
-        CharSequence energyValue = energyBalancePresent
+        CharSequence energyInValue = energyBalancePresent
                 ? UnitsFormatter.energyBalance(v.getContext(),
-                (int) (o.getDaySummary().getEnergySummary().get().getEnergyIn() -
-                        o.getDaySummary().getEnergySummary().get().getEnergyOut()), true) : "";
+                (int) (o.getDaySummary().getEnergySummary().get().getEnergyIn()), true) : "";
+        
+        CharSequence energyOutValue = energyBalancePresent
+                ? UnitsFormatter.energyBalance(v.getContext(),
+                (int) (0 - o.getDaySummary().getEnergySummary().get().getEnergyOut()), true) : "";
 
-        energyBar.getRound().setCardBackgroundColor(connected && onHand
+        energyInBar.getRound().setCardBackgroundColor(connected && onHand
                 ? getColor(R.color.secondary_purple)
                 : getColor(R.color.light_black_38));
-        energyBar.setTitleText(R.string.energy_header);
-        energyBar.setTextVisible(energyPresent);
-        energyBar.setText(energyText);
-        energyBar.setValueVisible(energyBalancePresent);
-        energyBar.setValueText(energyValue);
-
-        energyBar.setVisibility(View.VISIBLE);
-
+        energyInBar.setTitleText(R.string.energy_in_header);
+        energyInBar.setTextVisible(energyPresent);
+        energyInBar.setText(energyText);
+        energyInBar.setValueVisible(energyBalancePresent);
+        energyInBar.setValueText(energyInValue);
+        energyInBar.setVisibility(View.VISIBLE);
+        
+        energyOutBar.getRound().setCardBackgroundColor(connected && onHand
+                ? getColor(R.color.secondary_purple)
+                : getColor(R.color.light_black_38));
+        energyOutBar.setTitleText(R.string.energy_out_header);
+        energyOutBar.setTextVisible(energyPresent);
+        energyOutBar.setText(energyText);
+        energyOutBar.setValueVisible(energyBalancePresent);
+        energyOutBar.setValueText(energyOutValue);
+        energyOutBar.setVisibility(View.VISIBLE);
+        
         return energyBalancePresent;
     }
 
@@ -127,6 +148,32 @@ public class SummaryViewHolder {
 
         waterBar.setVisibility(View.VISIBLE);
         return waterSumPresent;
+    }
+
+    private boolean setBloodPressureSum(SummaryInfo o){
+        boolean connected = o.isConnected();
+        boolean onHand = o.isOnHand();
+        boolean bloodPressurePre = o.getBloodPressure().getDiastolic() > 0;
+
+        String bloodPressureText = bloodPressurePre ? "" : v.getResources().getString(R.string.calculating);
+
+        int diastolic = o.getBloodPressure().getDiastolic();
+        int systolic = o.getBloodPressure().getSystolic();
+
+        CharSequence bloodPressureVal = bloodPressurePre ? UnitsFormatter.bloodPressureSpan(v.getContext(), diastolic, systolic) : "";
+
+        bloodBar.getRound().setCardBackgroundColor(connected && onHand
+                ? getColor(R.color.main_heart_red)
+                : getColor(R.color.light_black_38));
+        bloodBar.setTitleText(connected && onHand ? R.string.blood_header_cur : R.string.blood_header);
+        bloodBar.setText(bloodPressureText);
+        bloodBar.setTextVisible(bloodPressurePre);
+        bloodBar.setValueVisible(bloodPressurePre);
+        bloodBar.setValueText(bloodPressureVal);
+
+        bloodBar.setVisibility(View.VISIBLE);
+
+        return bloodPressurePre;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -195,7 +242,6 @@ public class SummaryViewHolder {
         return stressSumPresent;
     }
 
-
     @SuppressWarnings("ConstantConditions")
     private boolean setSleepSum(SummaryInfo o) {
         boolean connected = o.isConnected();
@@ -212,8 +258,6 @@ public class SummaryViewHolder {
                         : v.getContext().getString(R.string.sleep_quality).toLowerCase() + ": "
                         + o.getDaySummary().getSleepSummary().get().getQuality() + "%");
 
-
-
         int sleepDur = sleepPresent ? (int) o.getDaySummary().getSleepSummary().get().getSleepDuration(TimeUnit.MINUTES) : 0;
         CharSequence sleepValue = sleepPresent ?
                 UnitsFormatter.minutesBoldValNormalHelper(v.getContext(), sleepDur) : "";
@@ -229,25 +273,18 @@ public class SummaryViewHolder {
         sleepBar.setValueVisible(sleepPresent);
         sleepBar.setText(sleepText);
         sleepBar.setValueText(sleepValue);
-
-
         sleepBar.setVisibility(View.VISIBLE);
 
         return sleepPresent;
+    }
+
+    private boolean isNight() {
+        return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 - TimeZone.getDefault().getRawOffset() / (1000 * 60) > 9 * 60
+                || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 - TimeZone.getDefault().getRawOffset() / (1000 * 60) < 6 * 60;
     }
 
     private int getColor(int colId) {
         return ContextCompat.getColor(v.getContext(), colId);
     }
 
-
-    public void setSummary(SummaryInfo todaySummaryInfo) {
-        this.todaySummaryInfo = todaySummaryInfo;
-
-        setEnergySum(todaySummaryInfo);
-        setHydrationSum(todaySummaryInfo);
-        setHeartSum(todaySummaryInfo);
-        setStressSum(todaySummaryInfo);
-        setSleepSum(todaySummaryInfo);
-    }
 }

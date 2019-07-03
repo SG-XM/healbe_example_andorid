@@ -181,6 +181,21 @@ public class UnitsFormatter {
         return spannable;
     }
 
+    public static CharSequence bloodPressureSpan(Context context, int diastolic, int systolic) {
+        DecimalFormat dfpulse = new DecimalFormat();
+        dfpulse.setGroupingSize(3);
+        dfpulse.setGroupingUsed(true);
+
+        String diastolicStr = dfpulse.format(diastolic);
+        String systolicStr = dfpulse.format(systolic);
+        String bpm = context.getString(R.string.mmHg);
+
+        Spannable spannable = new SpannableString("\n" + systolicStr + "/" + diastolicStr + " " + bpm);
+        spannable.setSpan(new TypefaceSpan("sans-serif-medium"), 0, systolicStr.length(), Spannable.SPAN_POINT_POINT);
+        spannable.setSpan(new TypefaceSpan("sans-serif"), systolicStr.length() + 1, spannable.length(), Spannable.SPAN_POINT_POINT);
+
+        return spannable;
+    }
 
     public static CharSequence minutesBoldValNormalHelper(Context context, int val) {
 

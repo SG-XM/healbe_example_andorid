@@ -60,6 +60,7 @@ public class SearchFragment extends ConnectionRoutedFragment {
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
+    //TODO 10.监听搜索到设备list，选择设备setDevice修改state：CONNECT，goState进入ConnectFragment
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -107,7 +108,7 @@ public class SearchFragment extends ConnectionRoutedFragment {
                         }, Timber::e));
     }
 
-
+    //TODO 8.检查蓝牙权限
     // check necessary bluetooth permission
     private void checkBluetoothPerm() {
         Permissions.requestPerm(boolValue -> {
@@ -195,6 +196,7 @@ public class SearchFragment extends ConnectionRoutedFragment {
         divider.setVisibility(View.INVISIBLE);
     }
 
+    //TODO 9.扫描手环设备
     private void startScan() {
         scanStartState();
         adapter.clear();
@@ -225,7 +227,7 @@ public class SearchFragment extends ConnectionRoutedFragment {
     private void showErrorIfEmpty() {
         stopScan();
         if (adapter.devices.isEmpty()) {
-            Timber.d("Error [no devices  found]!");
+            Timber.d("Error [no devices found]!");
             scanNotFoundAndStopState();
         } else {
             scanFoundAndStopState();

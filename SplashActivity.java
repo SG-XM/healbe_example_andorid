@@ -22,6 +22,7 @@ public class SplashActivity extends AppCompatActivity {
     // for saving any opened subscribers in activity
     private CompositeDisposable destroy = new CompositeDisposable();
 
+    //TODO 1.初始化HealbeSdk
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +48,13 @@ public class SplashActivity extends AppCompatActivity {
 
     // session preparing
     private void initSession() {
+        //TODO 2.检查session中登录的用户信息
         destroy.add(HealbeSdk.get().USER.prepareSession()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::sessionStateSwitch, Timber::e));
     }
 
+    //TODO 3.未登录或用户信息过期则登录Healbe用户，登录后或已有登录信息连接设备
     private void sessionStateSwitch(HealbeSessionState sessionState) {
         switch (sessionState) {
             case VALID_OLD_USER: // user authorized and paired wristband

@@ -1,6 +1,7 @@
 package com.healbe.healbe_example_andorid.dashboard;
 
 import com.healbe.healbesdk.business_api.healthdata.data.DaySummary;
+import com.healbe.healbesdk.business_api.healthdata.data.heart.BloodPressure;
 import com.healbe.healbesdk.business_api.healthdata.data.stress.StressState;
 import com.healbe.healbesdk.business_api.healthdata.data.water.HydrationState;
 import com.healbe.healbesdk.business_api.tasks.entity.HeartRate;
@@ -19,6 +20,7 @@ class SummaryInfo {
     private StressState stressState;
     private float stressLevel;
     private WeightUnits weightUnits;
+    private BloodPressure bloodPressure;
 
     public SummaryInfo() {
         this.clientState = ClientState.DISCONNECTED;
@@ -27,9 +29,11 @@ class SummaryInfo {
         this.heartRate = new HeartRate();
         this.hydrationState = HydrationState.NO_DATA;
         this.stressState = StressState.NO_DATA;
+        this.bloodPressure = new BloodPressure(0,0,0);
     }
 
-    public SummaryInfo(ClientState clientState, boolean onHand, DaySummary daySummary, HeartRate heartRate, HydrationState hydrationState, StressState stressState, float stressLevel) {
+    public SummaryInfo(ClientState clientState, boolean onHand, DaySummary daySummary, HeartRate heartRate,
+                       HydrationState hydrationState, StressState stressState, float stressLevel, BloodPressure bloodPressure) {
         this.clientState = clientState;
         this.onHand = onHand;
         this.daySummary = daySummary;
@@ -37,14 +41,15 @@ class SummaryInfo {
         this.hydrationState = hydrationState;
         this.stressState = stressState;
         this.stressLevel = stressLevel;
+        this.bloodPressure = bloodPressure;
     }
 
-
-    public SummaryInfo(ClientState clientState, boolean onHand, DaySummary daySummary, HeartRate heartRate) {
+    public SummaryInfo(ClientState clientState, boolean onHand, DaySummary daySummary, HeartRate heartRate, BloodPressure bloodPressure) {
         this.clientState = clientState;
         this.onHand = onHand;
         this.daySummary = daySummary;
         this.heartRate = heartRate;
+        this.bloodPressure = bloodPressure;
     }
 
     public boolean isConnected() {
@@ -115,6 +120,13 @@ class SummaryInfo {
         this.weightUnits = weightUnits;
     }
 
+    public BloodPressure getBloodPressure() {
+        return bloodPressure;
+    }
+
+    public void setBloodPressure(BloodPressure bloodPressure) {
+        this.bloodPressure = bloodPressure;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -126,6 +138,7 @@ class SummaryInfo {
                 clientState == that.clientState &&
                 Objects.equals(daySummary, that.daySummary) &&
                 Objects.equals(heartRate, that.heartRate) &&
+                Objects.equals(bloodPressure, that.bloodPressure) &&
                 hydrationState == that.hydrationState &&
                 stressState == that.stressState &&
                 weightUnits == that.weightUnits;
@@ -133,8 +146,7 @@ class SummaryInfo {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(clientState, onHand, daySummary, heartRate, hydrationState, stressState, stressLevel, weightUnits);
+        return Objects.hash(clientState, onHand, daySummary, heartRate, hydrationState, stressState, stressLevel, weightUnits, bloodPressure);
     }
 
     @SuppressWarnings("NullableProblems")
@@ -149,6 +161,7 @@ class SummaryInfo {
                 ", stressState=" + stressState +
                 ", stressLevel=" + stressLevel +
                 ", weightUnits=" + weightUnits +
+                ", bloodPressure=" + bloodPressure +
                 '}';
     }
 }

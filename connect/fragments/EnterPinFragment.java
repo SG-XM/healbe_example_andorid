@@ -49,6 +49,7 @@ public class EnterPinFragment extends ConnectionRoutedFragment {
         return inflater.inflate(R.layout.fragment_enter_pin, container, false);
     }
 
+    //TODO 12.输入PIN码校验，成功后连接设备
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

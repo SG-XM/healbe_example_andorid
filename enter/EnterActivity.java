@@ -31,6 +31,7 @@ public class EnterActivity extends BaseActivity implements LoginFragment.LoginLi
         findViewById(R.id.container).setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
     }
 
+    //TODO 5.登录成功连接设备
     @Override
     public void onLoginSucceeded() {
         Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(this,

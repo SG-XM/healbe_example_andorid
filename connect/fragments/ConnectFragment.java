@@ -94,9 +94,12 @@ public class ConnectFragment extends ConnectionRoutedFragment {
         }, BLUETOOTH, getActivity());
     }
 
+    //TODO 11.连接设备，根据HealbeSdk.get().GOBE.observeConnectionState()返回状态，stateMap找出对应方法
+    // 首次连接ClientState >> REQUEST_PIN_CODE需要输入PIN码
+    // 连接成功ClientState >> READY，执行DashboardActivity
     @SuppressLint("LogNotTimber")
     private void connect() {
-        Log.d("ConnectFragment", "cconnect..");
+        Log.d("ConnectFragment", "connect..");
         //noinspection ConstantConditions
         destroy.add(HealbeSdk.get().GOBE.observeConnectionState()
                 //we observe connection states and show them

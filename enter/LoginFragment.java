@@ -111,6 +111,7 @@ public class LoginFragment extends Fragment {
 
     // send login pair
     @SuppressWarnings({"unused", "ConstantConditions"})
+    //TODO 4.Healbe账户登录
     private void onButtonClick(View v) {
         button.setVisibility(View.INVISIBLE);
         progress.setVisibility(View.VISIBLE);

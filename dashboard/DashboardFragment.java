@@ -3,13 +3,16 @@ package com.healbe.healbe_example_andorid.dashboard;
 import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.healbe.healbe_example_andorid.R;
 import com.healbe.healbe_example_andorid.tools.BluetoothBroadcastReceiver;
 import com.healbe.healbe_example_andorid.tools.SystemBarManager;
 import com.healbe.healbesdk.business_api.HealbeSdk;
+import com.healbe.healbesdk.business_api.healthdata.data.heart.BloodPressure;
 import com.healbe.healbesdk.business_api.healthdata.data.stress.StressState;
 import com.healbe.healbesdk.business_api.healthdata.data.water.HydrationState;
 import com.healbe.healbesdk.business_api.tasks.entity.SensorState;
@@ -22,6 +25,7 @@ import com.healbe.healbesdk.utils.groups.Triple;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -62,6 +66,9 @@ public class DashboardFragment extends Fragment {
         root.setPadding(root.getPaddingLeft(), root.getPaddingTop(), root.getPaddingRight(), config.getPixelInsetBottom());
     }
 
+    //TODO 13.数据计算和显示：（所有数据通过HealbeSdk.get() GOBE，TASKS，ARCHIVE获取基础信息计算）
+    // setSummary计算能量，心率，水合状态，血压，压力，睡眠数据；
+    // setWristbandStateInfo获取设备数据：设备名称，电量，连接状态，蓝牙状态，同步进程以及异常提示
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -81,6 +88,7 @@ public class DashboardFragment extends Fragment {
                 HealbeSdk.get().TASKS.observeSensorState().map(SensorState::isOnHand),
                 HealbeSdk.get().ARCHIVE.getAllDaySummaries(0).toObservable(),
                 HealbeSdk.get().TASKS.observeHeartRate(),
+                HealbeSdk.get().GOBE.measureBloodPressure().toObservable(),
                 SummaryInfo::new)
                 .observeOn(Schedulers.computation())
                 .distinctUntilChanged(SummaryInfo::equals)
@@ -91,6 +99,9 @@ public class DashboardFragment extends Fragment {
 
     // adding current values to summary
     private SummaryInfo setCurrents(SummaryInfo t) {
+        Log.e("setCurrents", t.getBloodPressure().toString());
+        Log.e("setCurrents", t.getHeartRate().toString());
+
         Triple<Float, StressState, HydrationState> triple = RxUtils.combine(
                 HealbeSdk.get().ARCHIVE.getCurrentStressLevel(),
                 HealbeSdk.get().ARCHIVE.getCurrentStressState(),

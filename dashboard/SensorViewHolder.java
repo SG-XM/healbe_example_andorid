@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat;
 
 import static com.healbe.healbesdk.device_api.ClientState.READY;
 
-
 /**
  * Created by Alexey on 06.03.2018.
  */
@@ -49,8 +48,14 @@ public class SensorViewHolder {
 
     }
 
-    private void setWristbandName(WristbandStateInfo stateInfo) {
-        title.setText(stateInfo.getWristbandName());
+    public void setWristbandStateInfo(WristbandStateInfo stateInfo) {
+        wristbandStateInfo = stateInfo;
+        setWristbandName(stateInfo);
+        setConnectionState(stateInfo);
+        setBluetoothState(stateInfo);
+        setSyncProgress(stateInfo);
+        setChargingValue(stateInfo);
+        setBottomView(stateInfo);
     }
 
     public enum DeviceState {
@@ -74,6 +79,10 @@ public class SensorViewHolder {
 
             return DISCONNECTED;
         }
+    }
+
+    private void setWristbandName(WristbandStateInfo stateInfo) {
+        title.setText(stateInfo.getWristbandName());
     }
 
     private void setConnectionState(WristbandStateInfo stateInfo) {
@@ -149,17 +158,7 @@ public class SensorViewHolder {
             indi.setText(percents + "%");
     }
 
-    public void setWristbandStateInfo(WristbandStateInfo stateInfo) {
-        wristbandStateInfo = stateInfo;
-        setWristbandName(stateInfo);
-        setConnectionState(stateInfo);
-        setBluetoothState(stateInfo);
-        setSyncProgress(stateInfo);
-        setChargingValue(stateInfo);
-        setBottomView(stateInfo);
-    }
-
-    public void setBottomView(WristbandStateInfo stateInfo) {
+    private void setBottomView(WristbandStateInfo stateInfo) {
         if (stateInfo.getBtState() == WristbandStateInfo.BluetoothState.BT_OFF) {
             //content
             warnText.setText(R.string.enable_bluetooth);
